@@ -19,6 +19,7 @@ const QuizComponent: React.FC = () => {
   const [quizName, setQuizName] = useState<string | null>(null);
   const [score, setScore] = useState<number>(0);
 
+    // Henter spørsmålet når komponenten lastes inn
   useEffect(() => {
     fetch('http://localhost:5236/quiz')
       .then(response => response.json())
@@ -27,7 +28,8 @@ const QuizComponent: React.FC = () => {
       })
       .catch(error => console.error('Error:', error));
   }, []);
-
+ 
+  // Henter quiz-tittelen når komponenten lastes inn
   useEffect(() => {
     fetch('http://localhost:5236/quiz/title')
       .then(response => response.json())
@@ -37,17 +39,20 @@ const QuizComponent: React.FC = () => {
       .catch(error => console.error('Error:', error));
   }, []);
 
-  
+    // Håndterer innsending av svar
   const handleSubmit = () => {
     if (selectedOption === null || question === null) {
       alert('Please select an option');
       return;
     }
+    
+   // Oppretter svaret
     const answer: Answer = {
       questionId: question.id,
       userAnswer: selectedOption,
     };
   
+    // Sender svaret til serveren
     fetch('http://localhost:5236/quiz', {
       method: 'POST',
       headers: {
@@ -56,6 +61,7 @@ const QuizComponent: React.FC = () => {
       body: JSON.stringify(answer),
     })
       .then(response => {
+      // Hvis svaret er riktig, hent neste spørsmål og øk score
         if (response.ok) {
           return response.json();
         } else {
