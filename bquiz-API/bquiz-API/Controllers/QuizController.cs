@@ -1,87 +1,68 @@
 using bquiz_API.Models;
-using Newtonsoft.Json;
+using Microsoft.AspNetCore.Mvc;
 
-public class QuizService
+// Definerer en API-kontroller for quizzen
+[ApiController]
+[Route("[controller]")]
+public class QuizController : ControllerBase
 {
-    private List<Question> _questions;
-    private Dictionary<int, int> _correctAnswers = new Dictionary<int, int>();
-    private int _currentQuestionIndex = -1;
+    private QuizService _quizService;
 
-    // Konstruktør som henter og setter opp spørsmål ved opprettelsen av QuizService-objektet
-    public QuizService()
+    // QuizController konstruktør som tar QuizService som parameter
+    public QuizController(QuizService quizService)
     {
-        var jsonData = File.ReadAllText("questions.json"); // Henter spørsmålene fra en JSON-fil
-        var root = JsonConvert.DeserializeObject<Root>(jsonData); // Parser JSON til Root-objekt
-        _questions = root.Quiz.Questions; // Setter opp spørsmålsliste
-        for (int i = 0; i < _questions.Count; i++)
+        _quizService = quizService; // Lagrer en referanse til QuizService
+    }
+
+    // Endpoint for å hente tittelen på quizzen
+    [HttpGet("title")]
+    public ActionResult<string> GetTitle()
+    {
+        var title = _quizService.GetQuizTitle(); // Henter tittelen fra QuizService
+        return Ok(new { title = title }); // Returnerer tittelen i en OK-respons
+    }
+
+    // Endpoint for å hente et spørsmål
+    [HttpGet]
+    public ActionResult<Question> Get()
+    {
+        // Sjekker om det finnes et nåværende spørsmål, og henter et nytt spørsmål om nødvendig
+        if (_quizService.GetCurrentQuestion() == null)
         {
-            int id = i + 1;
-            _questions[i].Id = id; // Setter id for hvert spørsmål
-            _correctAnswers[id] = _questions[i].CorrectAnswer; // Lagrer riktige svar i et ordbok
+            _quizService.MoveToNextQuestion();
+            var question = _quizService.GetRandomQuestion();
+            return Ok(question); // Returnerer spørsmålet i en OK-respons
+        }
+        else
+        {
+            var question = _quizService.GetCurrentQuestion();
+            return Ok(question); // Returnerer det nåværende spørsmålet i en OK-respons
         }
     }
 
-    // Metode for å hente quizens tittel
-    public string GetQuizTitle()
+    // Endpoint for å poste et svar
+    [HttpPost]
+    public ActionResult<Question> Post([FromBody] QuizModels answer)
     {
-        var jsonData = File.ReadAllText("questions.json");
-        var root = JsonConvert.DeserializeObject<Root>(jsonData);
-        return root.Quiz.Title; // Returnerer quizens tittel
-    }
-
-    // Metode for å hente et tilfeldig spørsmål fra listen
-    public PublicQuestion GetRandomQuestion()
-    {
-        var random = new Random();
-        var index = random.Next(_questions.Count);
-        var question = _questions[index]; // Velger et tilfeldig spørsmål
-
-        var publicQuestion = new PublicQuestion
+        // Sjekker om det finnes et nåværende spørsmål
+        if (_quizService.GetCurrentQuestion() == null)
         {
-            Id = question.Id,
-            QuestionText = question.QuestionText,
-            Options = question.Options
-        };
-
-        return publicQuestion; // Returnerer det tilfeldige spørsmålet
-    }
-
-    // Metode for å hente det nåværende spørsmålet basert på _currentQuestionIndex
-    public PublicQuestion GetCurrentQuestion()
-    {
-        if (_currentQuestionIndex < 0 || _currentQuestionIndex >= _questions.Count)
-        {
-            return null; // Returnerer null hvis indeksen ikke er gyldig
+            // Returnerer en BadRequest-respons om det ikke finnes et nåværende spørsmål
+            return BadRequest(new { error = "You must fetch the initial question first." });
         }
 
-        var question = _questions[_currentQuestionIndex];
-
-        var publicQuestion = new PublicQuestion
+        var isCorrect = _quizService.CheckAnswer(answer); // Sjekker svaret
+        if (isCorrect)
         {
-            Id = question.Id,
-            QuestionText = question.QuestionText,
-            Options = question.Options
-        };
-
-        return publicQuestion; // Returnerer det nåværende spørsmålet
-    }
-
-    // Metode for å få antallet spørsmål i quizzen
-    public int GetQuestionsCount()
-    {
-        return _questions.Count; // Returnerer antallet spørsmål
-    }
-
-    // Metode for å sjekke om et gitt svar er riktig
-    public bool CheckAnswer(QuizModels answer)
-    {
-        // Sjekker om svaret er riktig og returnerer resultatet
-        return _correctAnswers.TryGetValue(answer.QuestionId, out var correctAnswer) && correctAnswer == answer.UserAnswer;
-    }
-
-    // Metode for å flytte til neste spørsmål ved å øke _currentQuestionIndex
-    public void MoveToNextQuestion()
-    {
-        _currentQuestionIndex++;
+            // Hvis svaret er riktig, beveger vi oss til neste spørsmål og returnerer det nye spørsmålet
+            _quizService.MoveToNextQuestion();
+            var question = _quizService.GetRandomQuestion();
+            return Ok(question);
+        }
+        else
+        {
+            // Hvis svaret er feil, returnerer vi en BadRequest-respons
+            return BadRequest(new { error = "Incorrect Answer!" });
+        }
     }
 }
