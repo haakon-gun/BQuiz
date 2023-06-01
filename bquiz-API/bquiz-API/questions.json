@@ -1,0 +1,107 @@
+{
+  "quiz": {
+    "title": "Full-Stack Developer Quiz",
+    "questions": [
+      {
+        "question": "What does HTML stand for?",
+        "options": [
+          "Hyper Text Markup Language",
+          "Home Tool Markup Language",
+          "Hyperlinks and Text Markup Language",
+          "Hyper Text Makeup Language"
+        ],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Which programming language is used for server-side development?",
+        "options": [
+          "JavaScript",
+          "HTML",
+          "CSS",
+          "Python"
+        ],
+        "correctAnswer": 3
+      },
+      {
+        "question": "What does CSS stand for?",
+        "options": [
+          "Cascading Style Sheets",
+          "Creative Style Sheets",
+          "Colorful Style Sheets",
+          "Computer Style Sheets"
+        ],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Which of the following is not a JavaScript framework or library?",
+        "options": [
+          "React",
+          "Angular",
+          "Vue",
+          "Ruby"
+        ],
+        "correctAnswer": 3
+      },
+      {
+        "question": "What is the output of the following code: console.log(2 + '2')?",
+        "options": [
+          "22",
+          "4",
+          "NaN",
+          "TypeError"
+        ],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Which method is used to send a GET request in JavaScript using the Fetch API?",
+        "options": [
+          "fetch.get()",
+          "fetch.request()",
+          "fetch.get()",
+          "fetch()"
+        ],
+        "correctAnswer": 3
+      },
+      {
+        "question": "What does JSON stand for?",
+        "options": [
+          "JavaScript Object Notation",
+          "JavaScript Oriented Notation",
+          "Java Syntax Object Notation",
+          "Java Standard Object Notation"
+        ],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Which database management system is widely used for full-stack development?",
+        "options": [
+          "MySQL",
+          "MongoDB",
+          "SQLite",
+          "Oracle"
+        ],
+        "correctAnswer": 1
+      },
+      {
+        "question": "Which method is used to add a new element to the end of an array in JavaScript?",
+        "options": [
+          "push()",
+          "pop()",
+          "splice()",
+          "concat()"
+        ],
+        "correctAnswer": 0
+      },
+      {
+        "question": "What does API stand for?",
+        "options": [
+          "Application Programming Interface",
+          "Application Program Interface",
+          "Automated Programming Interface",
+          "Automated Program Interface"
+        ],
+        "correctAnswer": 0
+      }
+    ]
+  }
+}
