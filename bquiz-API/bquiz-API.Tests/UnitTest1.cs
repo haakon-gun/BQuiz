@@ -15,8 +15,6 @@ namespace bquiz_API.Tests
         [TestInitialize]
         public void Setup()
         {
-            // Here we're creating a mock json data to use for our tests.
-            // You should replace this with similar json data to what you expect in your actual "questions.json".
             var mockJsonData = @"
             {
                 'Quiz': {
@@ -36,10 +34,8 @@ namespace bquiz_API.Tests
                 }
             }";
 
-            // Mock the ReadAllText method to return our mock json data.
             File.WriteAllText("questions.json", mockJsonData);
 
-            // Initialize QuizService for each test.
             _quizService = new QuizService();
         }
 
@@ -71,7 +67,7 @@ namespace bquiz_API.Tests
         [TestMethod]
         public void TestCheckAnswer()
         {
-            var answer = new QuizModels { QuestionId = 1, UserAnswer = 1 };
+            var answer = new QuizModels(1, 1);
             var result = _quizService.CheckAnswer(answer);
             Assert.IsTrue(result);
         }
@@ -80,7 +76,7 @@ namespace bquiz_API.Tests
         [TestCleanup]
         public void Cleanup()
         {
-            File.Delete("questions.json");  // Clean up the mock json file after each test.
+            File.Delete("questions.json");
         }
     }
 }

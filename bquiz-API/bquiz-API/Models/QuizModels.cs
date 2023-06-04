@@ -1,21 +1,8 @@
 ﻿using bquiz_API.Models;
-using Newtonsoft.Json;
 
 namespace bquiz_API.Models
 {
-    public class QuizModels
-    {
-        public int QuestionId { get; set; }
-        public int UserAnswer { get; set; }
-    }
-
-    public class PublicQuestion
-    {
-        public int Id { get; set; }
-        [JsonProperty("question")]
-        public string QuestionText { get; set; }
-        public List<string> Options { get; set; }
-    }
+    public record QuizModels(int QuestionId, int UserAnswer);
 
     public class Question : PublicQuestion
     {
